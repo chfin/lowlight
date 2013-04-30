@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang=en>
+ <head>
+  <meta charset=UTF-8>
+  <title>Some highlighted code</title>
+  <link rel=stylesheet href=test.css>
+ </head>
+ <body>
+  <h1>Testcode</h1>
+  <pre>
+<code><span class="comment">;; known globals
+</span><span class="global">*read-base*</span>
+(<span class="specialop">let*</span> ((<span class="global">*package*</span> <span class="symbol">nil</span>)) <span class="quote">'</span><span class="symbol">random-symbol</span>)   <span class="comment">; let/let*/lambda are "special"
+</span>
+<span class="comment">;; known functions, unknown globals
+</span>(<span class="stdfun">when</span> (<span class="stdfun"><=</span> <span class="number">17.69</span> (<span class="symbol">get-value</span>))
+  (<span class="stdfun">incf</span> <span class="global">*my-global-lol*</span>))
+
+<span class="comment">;; number tests
+</span><span class="comment">;; all have class "number", but depending on type have integer, float, hex, binary
+</span><span class="quote">'</span>(<span class="number">80</span> <span class="number">-69.4</span> <span class="number">+5</span> <span class="number">822342.287</span> <span class="number">#xf40d</span> <span class="number">#b0101</span>)
+
+<span class="comment">;; t/nil + strings
+</span>(<span class="stdfun">format</span> <span class="symbol">t</span> <span class="string">"highlight-lisp.js sucksp: ~a~%"</span> <span class="symbol">nil</span>)
+
+<span class="comment">;; testing lambda-list specials (&key, &body, etc), multi-line strings,
+</span><span class="comment">;; constants, symbols, keywords
+</span>(<span class="define">defun</span> <span class="defname">test-me</span> (<span class="symbol">lol</span> <span class="lambda">&key</span> <span class="symbol">omg</span> (<span class="symbol">lol</span> <span class="quote">'</span><span class="symbol">wtf</span>))
+  (<span class="specialop">let</span> ((<span class="global">*global*</span> <span class="quote">'</span><span class="symbol">ur-mom</span>)
+        (<span class="symbol">strings</span> <span class="string">"r pretty kewl LOL"</span>)
+        (<span class="symbol">multi-line-strings</span> <span class="string">"can be kewl
+            as well"</span>)
+        (<span class="constant">+my-constant+</span> <span class="string">"wait, constants don't change!!"</span>))
+    (<span class="stdfun">make-instance</span> <span class="quote">'</span><span class="symbol">error</span> <span class="keyword">:message</span> <span class="string">"OMG ERROR!!!"</span>)))
+
+<span class="comment">;; known vs unknown #'functions
+</span>(<span class="stdfun">make-hash-table</span> <span class="keyword">:test</span> <span class="quote">#'</span><span class="symbol">equal</span>)
+(<span class="stdfun">make-hash-table</span> <span class="keyword">:test</span> <span class="quote">#'</span><span class="symbol">equalzz</span>)
+
+<span class="comment">;; testing known keywords (have class "known" as well as "keyword")
+</span>(<span class="stdfun">loop</span> <span class="symbol">for</span> <span class="symbol">x</span> <span class="symbol">being</span> <span class="symbol">the</span> <span class="keyword">:hash-keys</span> <span class="symbol">of</span> <span class="symbol">my-hash-table</span> <span class="symbol">collect</span> <span class="symbol">x</span>)
+
+(<span class="define">deftype</span> <span class="typedefname">test</span> ())
+
+(<span class="define">defvar</span> <span class="vardefname">*blabla*</span> <span class="symbol">nil</span>)
+
+<span class="character">#\A</span> <span class="character">#\1</span> <span class="character">#\Newline</span> <span class="character">#\"</span> 
+   </code>
+  </pre>
+ </body>
+</html>
