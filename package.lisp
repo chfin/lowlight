@@ -2,4 +2,6 @@
 
 (defpackage #:lowlight
   (:use #:cl)
-  (:export #:light #:light-file #:light-blocks #:light-file-blocks))
+  (:export #:light #:light-file
+	   #:light-blocks #:light-file-blocks
+	   #:define-style))
