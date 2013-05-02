@@ -1,0 +1,22 @@
+code .comment {color: rgb(153, 153, 136); font-style: italic;}
+code .quote {font-weight: bold;}
+
+code .string {color: #d14;}
+code .keyword {color: rgb(68, 85, 136);}
+code .number {color: rgb(0, 153, 153);}
+code .character {color: #d14;}
+
+code .define {color: rgb(153, 0, 115); /*font-weight: bold;*/}
+code .defname {color: #229;}
+code .vardefname {color: rgb(153, 85, 38);}
+code .typedefname {color: rgb(0, 153, 38);}
+
+code .lambda {color: rgb(0, 153, 38);}
+code .global {color: rgb(0, 128, 128); font-style: italic;}
+code .constant {color: rgb(0, 128, 128); font-style: italic;}
+/* code .symbol {color: rgb(0, 128, 128);} */
+
+code .withmacro {color: rgb(153, 0, 115);}
+code .specialop {font-weight: bold;}
+code .stdmacro {color: rgb(153, 0, 115);}
+code .stdfun {}
