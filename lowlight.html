@@ -1,0 +1,183 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+<title>lowlight - a simple syntax highlighter
+</title>
+<link rel='stylesheet' href='ghs-doc.css' />
+  </head>
+  <body>
+<article class='markdown-article' id='file-intro-md'>
+
+<h1>lowlight</h1>
+
+<p>A simple, regex based syntax highlighter in Common Lisp.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>higlighting code in html spans</li>
+<li>themable with css</li>
+<li>string and file highlighting</li>
+<li>simple and flexible highlighting engine</li>
+<li>based on regular expressions</li>
+</ul>
+
+<h3>Supported languages</h3>
+
+<ul>
+<li>Common Lisp</li>
+</ul>
+
+<p>I will probably support more languages in the future,
+but you can also define your own language styles.
+Also, patches to get your language style included are welcome.</p>
+
+<h2>Installation</h2>
+
+<p>ASDF, hopefully Quicklisp in the future.</p>
+
+<h2>Usage</h2>
+
+<p>All lowlight functions and macros live in the package <code>lowlight</code></p>
+
+<pre><code>(<span class="stdmacro">in-package</span> #:<span class="symbol">lowlight</span>)
+</code></pre>
+
+<p>To highlight a string use <code>light</code></p>
+
+<pre><code>(<span class="stdfun">light</span> <span class="keyword">:common-lisp</span> <span class="string">":bla"</span>) <span class="comment">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"
+</span></code></pre>
+
+<p>If you want to highlight a whole file, use <code>light-file</code>
+<pre><code>(<span class="stdfun">light-file</span> <span class="keyword">:common-lisp</span> <span class="string">&quot;~/lowlight.lisp&quot;</span> <span class="keyword">:css</span> <span class="string">&quot;github-colors.css&quot;</span>)
+</code></pre></p>
+
+</article>
+<article id='reference-lowlight' class='apiref-article'>
+  <h1>Reference: LOWLIGHT
+  </h1>
+<section id='lowlight-functions' class='section-functions'>
+  <h2>Functions
+  </h2>
+<section id='apiref-light' class='section-apiref-item'>
+  <div class='apiref-spec'>LIGHT
+  </div>
+  <div class='apiref-lambda'>(STYLE INPUT)
+  </div>
+  <div class='apiref-result'>=&gt; a highlighted string
+  </div>
+  <div class='apiref-doc'>
+
+<p>Highlights <code>input</code>.
+The used style is given by <code>style</code>.</p>
+
+  </div>
+</section>
+<section id='apiref-light-blocks' class='section-apiref-item'>
+  <div class='apiref-spec'>LIGHT-BLOCKS
+  </div>
+  <div class='apiref-lambda'>(STYLE INPUT &amp;OPTIONAL (BLOCKS STYLE))
+  </div>
+  <div class='apiref-result'>=&gt; a highlighted string
+  </div>
+  <div class='apiref-doc'>
+
+<p>Takes all blocks between three backticks followed by a language specifier, and three closing backticks.
+The language specifiers are given by <code>blocks</code> which is either a single item or a list.
+The block markers are converted to strings by <code>~a</code> and matched case-independently
+(so you can use keywords here, <code>:common-lisp</code> matches <code>```common-lisp</code>).</p>
+
+  </div>
+</section>
+<section id='apiref-light-file' class='section-apiref-item'>
+  <div class='apiref-spec'>LIGHT-FILE
+  </div>
+  <div class='apiref-lambda'>(STYLE IN &amp;KEY OUT CSS TITLE RAW)
+  </div>
+  <div class='apiref-result'>=&gt; <code>t</code>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Highlights the file given by <code>in</code>.
+The used style is denoted by <code>style</code>.
+If given, the result is written to the file <code>out</code>,
+otherwise <code>in</code> is used, with the file ending replaced by html.
+If given, <code>css</code> is used as the href parameter to a css relation
+and <code>title</code> is used as the page title.
+If <code>raw</code> is <code>t</code> the highlighted code is <em>not</em> wrapped into a html skeleton.</p>
+
+  </div>
+</section>
+<section id='apiref-light-file-blocks' class='section-apiref-item'>
+  <div class='apiref-spec'>LIGHT-FILE-BLOCKS
+  </div>
+  <div class='apiref-lambda'>(STYLE IN &amp;KEY OUT (BLOCKS STYLE))
+  </div>
+  <div class='apiref-result'>=&gt; <code>t</code>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Highlights all blocks (see <a href="#apiref-light-blocks" ><code>light-blocks</code></a>).
+<code>in</code> and <code>out</code> behave similar to <a href="#apiref-light-file" ><code>light-file</code></a>.</p>
+
+  </div>
+</section>
+</section>
+<section id='lowlight-macros' class='section-macros'>
+  <h2>Macros
+  </h2>
+<section id='apiref-define-style' class='section-apiref-item'>
+  <div class='apiref-spec'>DEFINE-STYLE
+  </div>
+  <div class='apiref-lambda'>(STYLE &amp;BODY CLAUSES)
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Defines a new style.
+<code>style</code> is the name of the style, typically a keyword.
+<code>clauses</code> are lists of the form <code>(regex n result*)</code>,
+where <code>regex</code> is either a string literal or a list
+beginning with a format string followed by format parameters.
+<code>n</code> is the number of registers in the regex (which must be constant!).
+The results return the highlighted string parts, which are either strings
+(not highlighted) or a cons cell,
+where the <code>car</code> is the css class and the <code>cdr</code> is the highlighted string.
+Inside the result clauses use the local macro <code>$</code> to access the regex registers,
+so <code>($ 1)</code> returns the first register.
+Note, that all text matched by the regex must appear in the results,
+otherwise it will be discarded.
+So if you want to highlight all <code>,</code> preceded by a <code>:</code>,
+the clause should look like this:
+<code>(&quot;(:)(,)&quot; 2 ($ 1) (cons &quot;comma&quot; ($ 2)))</code>.</p>
+
+  </div>
+</section>
+</section>
+</article>
+<article id='reference-lowlight.doc' class='apiref-article'>
+  <h1>Reference: LOWLIGHT.DOC
+  </h1>
+<section id='lowlight.doc-functions' class='section-functions'>
+  <h2>Functions
+  </h2>
+<section id='apiref-create-doc' class='section-apiref-item'>
+  <div class='apiref-spec'>CREATE-DOC
+  </div>
+  <div class='apiref-lambda'>()
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Creates the documentation (doc/lowlight.html) using cl-gendoc.</p>
+
+  </div>
+</section>
+</section>
+</article>
+  </body>
+</html>
