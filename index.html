@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Lowlight by chfin</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Lowlight</h1>
+        <p class="header">A simple syntax highlighter in Common Lisp</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/chfin/lowlight/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/chfin/lowlight/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/chfin/lowlight">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/chfin">chfin</a></p>
+
+
+      </header>
+      <section>
+        <h1>lowlight</h1>
+
+<p>A simple, regex based syntax highlighter in Common Lisp.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>higlighting code in html spans</li>
+<li>themable with css</li>
+<li>string and file highlighting</li>
+<li>simple and flexible highlighting engine</li>
+<li>based on regular expressions</li>
+</ul><h3>Supported languages</h3>
+
+<ul>
+<li>Common Lisp</li>
+</ul><p>I will probably support more languages in the future,
+but you can also define your own language styles.
+Also, patches to get your language style included are welcome.</p>
+
+<h2>Installation</h2>
+
+<p>ASDF, hopefully Quicklisp in the future.</p>
+
+<h2>Usage</h2>
+
+<p>For detailed documentation go <a href="lowlight.html">here</a></p>
+
+<p>All lowlight functions and macros live in the package <code>lowlight</code></p>
+
+<div class="highlight"><pre><span class="p">(</span><span class="nb">in-package</span> <span class="ss">#:lowlight</span><span class="p">)</span>
+</pre></div>
+
+<p>To highlight a string use <code>light</code></p>
+
+<div class="highlight"><pre><span class="p">(</span><span class="nv">light</span> <span class="ss">:common-lisp</span> <span class="s">":bla"</span><span class="p">)</span> <span class="c1">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
+</pre></div>
+
+<p>If you want to highlight a whole file, use <code>light-file</code></p>
+
+<div class="highlight"><pre><span class="p">(</span><span class="nv">light-file</span> <span class="ss">:common-lisp</span> <span class="s">"~/lowlight.lisp"</span> <span class="ss">:css</span> <span class="s">"github-colors.css"</span><span class="p">)</span>
+</pre></div>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
