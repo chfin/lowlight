@@ -17,6 +17,14 @@
 (defmethod get-style (style)
   (cdr (assoc style *styles*)))
 
+;;; get a styles name
+
+(defgeneric style-name (style)
+  (:documentation "=> the name of `style`"))
+
+(defmethod style-name (style)
+  style)
+
 ;;; get information about a styles classes
 
 (defgeneric style-classes (style)

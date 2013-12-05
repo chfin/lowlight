@@ -51,7 +51,17 @@ otherwise the result is returned as a string."
 				  :simple-calls t)
 	 output))
 
-(defun light-blocks (style input &key output (blocks style))
+(defun light-blocks (style input &key output (blocks (style-name style)))
+  "=> a highlighted string or `t`
+Highlights all markdown code blocks in `input` with `style`
+and writes the result to `output` (or returns the result as a string,
+if `output` is not given).
+
+`light-blocks` only hightlights blocks starting with a language name from `blocks`
+which defaults to the name of `style`. So if you are using the style `:common-lisp`
+and want to highlight blocks starting with ` ```common-lisp`, then you may leave out
+`blocks`. If you want blocks starting with ` ```cl` to be highlighted as well,
+use `'(:common-lisp :cl)` for `blocks`."
   (cond
     ((streamp input)
      (light-blocks style (read-into-string input) :output output :blocks blocks))
@@ -85,7 +95,13 @@ If `raw` is `t` the highlighted code is *not* wrapped into a html skeleton."
 				   (light style in-strm spinneret:*html*))))))))))
   t)
 
-(defun light-file-blocks (style in &key out (blocks style))
+(defun light-file-blocks (style in &key out (blocks (style-name style)))
+  "=> `t`
+Highlights a file with `light-blocks`.
+`in` denotes the input file, if `out` is given, it denotes the output file.
+If not, `in` is used, with the file extension replaced by `.html`,
+so `foo.lisp` becomes `foo.html`. 
+Be careful with files already ending on `.html` as they will not change."
   (unless out (setf out (make-pathname :type "html" :defaults in)))
   (with-open-file (out-strm out :direction :output :if-exists :supersede)
     (with-open-file (in-strm in)

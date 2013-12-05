@@ -116,13 +116,21 @@ otherwise the result is returned as a string.</p>
 <section id='apiref-light-blocks' class='section-apiref-item'>
   <div class='apiref-spec'>LIGHT-BLOCKS
   </div>
-  <div class='apiref-lambda'>(STYLE INPUT &amp;KEY OUTPUT (BLOCKS STYLE))
+  <div class='apiref-lambda'>(STYLE INPUT &amp;KEY OUTPUT (BLOCKS (STYLE-NAME STYLE)))
   </div>
-  <div class='apiref-result'>
+  <div class='apiref-result'>=&gt; a highlighted string or <code>t</code>
   </div>
   <div class='apiref-doc'>
 
-<p><em>Undocumented!</em></p>
+<p>Highlights all markdown code blocks in <code>input</code> with <code>style</code>
+and writes the result to <code>output</code> (or returns the result as a string,
+if <code>output</code> is not given).</p>
+
+<p><code>light-blocks</code> only hightlights blocks starting with a language name from <code>blocks</code>
+which defaults to the name of <code>style</code>. So if you are using the style <code>:common-lisp</code>
+and want to highlight blocks starting with <code>```common-lisp</code>, then you may leave out
+<code>blocks</code>. If you want blocks starting with <code>```cl</code> to be highlighted as well,
+use <code>'(:common-lisp :cl)</code> for <code>blocks</code>.</p>
 
   </div>
 </section>
@@ -148,13 +156,17 @@ If <code>raw</code> is <code>t</code> the highlighted code is <em>not</em> wrapp
 <section id='apiref-light-file-blocks' class='section-apiref-item'>
   <div class='apiref-spec'>LIGHT-FILE-BLOCKS
   </div>
-  <div class='apiref-lambda'>(STYLE IN &amp;KEY OUT (BLOCKS STYLE))
+  <div class='apiref-lambda'>(STYLE IN &amp;KEY OUT (BLOCKS (STYLE-NAME STYLE)))
   </div>
-  <div class='apiref-result'>
+  <div class='apiref-result'>=&gt; <code>t</code>
   </div>
   <div class='apiref-doc'>
 
-<p><em>Undocumented!</em></p>
+<p>Highlights a file with <code>light-blocks</code>.
+<code>in</code> denotes the input file, if <code>out</code> is given, it denotes the output file.
+If not, <code>in</code> is used, with the file extension replaced by <code>.html</code>,
+so <code>foo.lisp</code> becomes <code>foo.html</code>. 
+Be careful with files already ending on <code>.html</code> as they will not change.</p>
 
   </div>
 </section>
