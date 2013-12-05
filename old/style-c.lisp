@@ -1,6 +1,6 @@
 ;;;; style-c.lisp
 
-(in-package #:lowlight)
+(in-package #:lowlight.0)
 
 (defparameter *c-keywords*
   '("auto" "break" "case" "char" "const"
@@ -25,4 +25,6 @@
 	 (#\/ (cons "comment" ($ 1)))
 	 (#\" (cons "string" ($ 1)))
 	 (#\' (cons "character" ($ 1)))
-	 (t (error "Could not parse ~a" ($ 1)))))))
+	 (t (error "Could not parse ~a" ($ 1)))))
+    (("~{~a~^|~}" *c-keywords*)
+     1 (cons "keyword" ($ 1)))))

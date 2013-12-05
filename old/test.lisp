@@ -59,5 +59,14 @@
 
 (defun make-test2 ()
   (light-file :common-lisp
-	      "/home/christoph/Dev/Lisp/projects/lowlight/lowlight.lisp"
+	      "/home/chfin/lisp/projects/lowlight/lowlight.lisp"
 	      :css "test.css"))
+
+(defun make-test2-lex ()
+  (lowlight-lex:light-file :common-lisp
+			   "/home/chfin/lisp/projects/lowlight/lowlight.lisp"
+			   :css "test.css"))
+
+(defun c-test ()
+  (light-file :c
+	      "/home/chfin/lisp/projects/example.c"))

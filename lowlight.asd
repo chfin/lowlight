@@ -4,9 +4,12 @@
   :serial t
   :description "A simple and flexible syntax highlighter"
   :author "Christoph Finkensiep <chfin@freenet.de>"
-  :license "MIT"
-  :depends-on (#:cl-ppcre #:alexandria #:spinneret #:cl-who)
+  :license "MIT/X11"
+  :version "0.99.0"
+  :depends-on (#:cl-ppcre #:alexandria #:spinneret #:cl-who #:graylex #:yacc)
   :components ((:file "package")
-               (:file "lowlight")
-	       (:file "style-lisp")
-	       (:file "style-c")))
+	       (:file "common")
+	       (:file "simple")
+	       (:file "grammar")
+	       (:file "lowlight")
+	       (:file "style-lisp")))

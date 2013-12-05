@@ -1,75 +1,65 @@
 ;;;; lowlight.lisp
 
-(in-package #:lowlight)
+(in-package #:lowlight.1)
 
-(defparameter *styles* nil)
+(defun read-into-string (in-stream &key (buffer-size 4096))
+  "=> a string containing the whole stream data from `in-stream`
+Taken from Alexandria's `read-file-into-string.`"
+  (let ((*print-pretty* nil))
+    (with-output-to-string (datum)
+      (let ((buffer (make-array buffer-size :element-type 'character)))
+	(loop
+	   :for bytes-read = (read-sequence buffer in-stream)
+	   :do (write-sequence buffer datum :start 0 :end bytes-read)
+	   :while (= bytes-read buffer-size))))))
 
-(defun wrap (fn n lst &optional coll)
-  (if lst
-      (if (= (length coll) (- n 1))
-	  (append (funcall fn (reverse (cons (car lst) coll)))
-		  (wrap fn n (cdr lst)))
-	  (wrap fn n (cdr lst) (cons (car lst) coll)))
-      (reverse coll)))
+(defun make-blocks-regex (blocks)
+  (format nil "```(~{~(~a~)~^|~})([\\S\\s]*?)```" blocks))
 
-(defun process-substring (regex n wrapper string)
-  (wrap wrapper n (cl-ppcre:split regex string
-				  :with-registers-p t
-				  :omit-unmatched-p t)))
+(defun light-blocks%* (style input output blocks)
+  (with-input-from-string (pre "```")
+    (with-input-from-string (post (format nil "```~(~a~)" (car blocks)))
+      (let* ((stream (make-concatenated-stream pre input post))
+	     (lexer (make-instance 'graylex:lexer-input-stream
+				   :stream stream
+				   :rules (cons (make-blocks-rule blocks)
+						(style-rules (get-style style))))))
+	(tokenize lexer output)))))
 
-(defun cat-strings (lst &optional strs)
-  (if (stringp (car lst))
-      (cat-strings (cdr lst) (cons (car lst) strs))
-      (let ((next (when lst (cons (car lst) (cat-strings (cdr lst))))))
-	(if strs
-	    (cons (apply #'concatenate (cons 'string (reverse strs))) next)
-	    next))))
+(defun light (style input &optional output)
+  "=> a highlighted string or `t`
+Highlights `input` which can be either a stream or a string.
+The used style is given by `style`.
+If `output` (a stream) is given, the result is printed on it,
+otherwise the result is returned as a string."
+  (cond
+    ((stringp input)
+     (with-input-from-string (stream input) (light style stream output)))
+    ((not output)
+     (with-output-to-string (out) (light style input out)))
+    (t (process-style (get-style style) input output)
+       t)))
 
-(defun process-rule (regex n wrapper lst)
-  (cat-strings (apply #'append
-		      (mapcar (lambda (i)
-				(if (stringp i)
-				    (process-substring
-				     (cl-ppcre:create-scanner
-				      regex :single-line-mode t
-				      :case-insensitive-mode t)
-				     n wrapper i)
-				    (list i)))
-			      lst))))
+(defun light-blocks% (style input output blocks)
+  "highlight all blocks in input"
+  (princ (ppcre:regex-replace-all (make-blocks-regex blocks) input
+				  (lambda (match r1 r2 &rest rest)
+				    (declare (ignore match rest))
+				    (format nil
+					    "<pre><code class=\"~(~a~) ~(~a~)\">~a</code></pre>"
+					    style r1 (light style r2)))
+				  :simple-calls t)
+	 output))
 
-(defun htmlifier (stream)
-  (lambda (item)
-    (if (consp item)
-	(format stream "<span class=\"~a\">~a</span>" (car item)
-		(cl-who:escape-string-minimal (cdr item)))
-	(format stream "~a" item))))
-
-(defun to-html (lst)
-  (with-output-to-string (stream)
-    (mapcar (htmlifier stream) lst)))
-
-(defun md-regex (blocks)
-  (cl-ppcre:create-scanner
-   (format nil "```(~{~a~^|~}).(.*?)```" (if (listp blocks) blocks (list blocks)))
-   :single-line-mode t :case-insensitive-mode t))
-
-(defun md-wrapper (style)
-  (lambda (parts)
-    (list (car parts)
-	  (let ((*print-pretty* nil))
-	    (spinneret:with-html-string
-	      (:pre (:code (:raw (light style (caddr parts))))))))))
-
-(defun light (style input)
-  "=> a highlighted string
-Highlights `input`.
-The used style is given by `style`."
-  (let ((style-rules (cdr (assoc style *styles*)))
-	(step (list input)))
-    (loop for rule in style-rules
-       do (setf step (process-rule (car rule) (cadr rule)
-				   (caddr rule) step)))
-    (to-html (remove nil step))))
+(defun light-blocks (style input &key output (blocks style))
+  (cond
+    ((streamp input)
+     (light-blocks style (read-into-string input) :output output :blocks blocks))
+    ((not output)
+     (with-output-to-string (out)
+       (light-blocks style input :output out :blocks blocks)))
+    (t (light-blocks% style input output (if (listp blocks) blocks (list blocks)))
+       t)))
 
 (defun light-file (style in &key out css title raw)
   "=> `t`
@@ -81,67 +71,30 @@ If given, `css` is used as the href parameter to a css relation
 and `title` is used as the page title.
 If `raw` is `t` the highlighted code is *not* wrapped into a html skeleton."
   (unless out (setf out (make-pathname :type "html" :defaults in)))
-  (let* ((str (alexandria:read-file-into-string in))
-	 (result (light style str)))
-    (with-open-file
-	(spinneret:*html* out :direction :output :if-exists :supersede)
-      (if raw
-	  (princ result spinneret:*html*)
-	  (spinneret:with-html
-	    (:doctype)
-	    (:html (:head (:title (or title (file-namestring in)))
+  (with-open-file (spinneret:*html* out :direction :output :if-exists :supersede)
+    (if raw
+	(with-open-file (in-strm in)
+	  (light style in-strm out-strm))
+	(spinneret:with-html
+	  (:doctype)
+	  (:html (:head (:title (or title (file-namestring in)))
 			  (when css (:link :rel "stylesheet" :href css)))
-		   (:body
-		    (:pre (:code (let ((*print-pretty* nil))
-				   (:raw result))))))))))
+		 (:body
+		  (:pre (:code (prog1 nil
+				 (with-open-file (in-strm in)
+				   (light style in-strm spinneret:*html*))))))))))
   t)
-
-(defun light-blocks (style input &optional (blocks style))
-  "=> a highlighted string
-Takes all blocks between three backticks followed by a language specifier, and three closing backticks.
-The language specifiers are given by `blocks` which is either a single item or a list.
-The block markers are converted to strings by `~a` and matched case-independently
-(so you can use keywords here, `:common-lisp` matches `` ```common-lisp ``)."
-  (let ((parts (cl-ppcre:split (md-regex blocks) input :with-registers-p t)))
-    (apply #'concatenate (cons 'string (wrap (md-wrapper style) 3 parts)))))
 
 (defun light-file-blocks (style in &key out (blocks style))
-  "=> `t`
-Highlights all blocks (see [`light-blocks`](#apiref-light-blocks)).
-`in` and `out` behave similar to [`light-file`](#apiref-light-file)."
   (unless out (setf out (make-pathname :type "html" :defaults in)))
-  (let ((str (alexandria:read-file-into-string in)))
-    (with-open-file (stream out :direction :output :if-exists :supersede)
-      (princ (light-blocks style str blocks) stream)))
-  t)
+  (with-open-file (out-strm out :direction :output :if-exists :supersede)
+    (with-open-file (in-strm in)
+      (light-blocks style in-strm :output out-strm :blocks blocks))))
 
-(defmacro define-style (style &body clauses)
-  "Defines a new style.
-`style` is the name of the style, typically a keyword.
-`clauses` are lists of the form `(regex n result*)`,
-where `regex` is either a string literal or a list
-beginning with a format string followed by format parameters.
-`n` is the number of registers in the regex (which must be constant!).
-The results return the highlighted string parts, which are either strings
-(not highlighted) or a cons cell,
-where the `car` is the css class and the `cdr` is the highlighted string.
-Inside the result clauses use the local macro `$` to access the regex registers,
-so `($ 1)` returns the first register.
-Note, that all text matched by the regex must appear in the results,
-otherwise it will be discarded.
-So if you want to highlight all `,` preceded by a `:`,
-the clause should look like this:
-`(\"(:)(,)\" 2 ($ 1) (cons \"comma\" ($ 2)))`."
-  (let* ((p-reg (gensym))
-	 (rules (mapcar (lambda (clause)
-			  (let ((r (car clause)))
-			    `(list ,(if (stringp r) r `(format nil ,@r))
-				   (1+ ,(cadr clause))
-				   (lambda (,p-reg)
-				     ,(cons 'list
-					    (cons `(car ,p-reg) 
-						  (cddr clause)))))))
-			clauses)))
-    `(macrolet (($ (n) (list 'nth n ',p-reg)))
-       (setf lowlight::*styles* (cons (cons ,style ,(cons 'list rules))
-				      (remove ,style *styles* :key #'car))))))
+;;; a simple language
+(define-simple-style :test-lang
+  ("\\\"[\\s\\S]*?\\\"" :string)
+  ("/\\*[\\s\\S]*?\\*/" :comment)
+  ("\\d*" :number)
+  ("\\w*" :word)
+  ("\\s*" :default))
