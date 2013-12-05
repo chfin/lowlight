@@ -6,8 +6,8 @@
 (defvar *styles* nil
   "An alist mapping from style keywords to style definitions.")
 
-;;controlling knob for the graylex buffer size
-(defvar *lexer-buffer-size* 1024)
+(defvar *lexer-buffer-size* 1024
+  "controlling knob for the graylex buffer size")
 
 ;;; get a style by keyword or itself
 

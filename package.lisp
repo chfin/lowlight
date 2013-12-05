@@ -7,4 +7,5 @@
 	  #:light-blocks #:light-file-blocks
 	  #:define-cfg-style #:make-cfg-style
 	  #:define-simple-style #:make-simple-style
-	  #:style-classes))
+	  #:style-classes
+	  #:*lexer-buffer-size*))

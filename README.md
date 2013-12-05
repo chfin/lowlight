@@ -55,7 +55,7 @@ As lowlight uses [graylex] for lexing,
 it currently suffers from a bug related do the buffer size graylex uses.
 If you experience Problems with the lexer not correctly recognizing tokens
 that cross the 1024 or 2048 character border, try to increase the buffer size
-`lowlight:*buffer-size*`.
+`lowlight:*lexer-buffer-size*`.
 
 [graylex]: https://github.com/e-user/graylex
 [cl-yacc]: http://www.pps.univ-paris-diderot.fr/~jch%20/software/cl-yacc/
