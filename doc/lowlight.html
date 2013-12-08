@@ -296,5 +296,44 @@ detected by <code>regex</code> and should return a keyword.</p>
 </section>
 </section>
 </article>
+<article id='reference-lowlight.tests' class='apiref-article'>
+  <h1>Reference: LOWLIGHT.TESTS
+  </h1>
+<section id='lowlight.tests-functions' class='section-functions'>
+  <h2>Functions
+  </h2>
+<section id='apiref-run' class='section-apiref-item'>
+  <div class='apiref-spec'>RUN
+  </div>
+  <div class='apiref-lambda'>(IT.BESE.FIVEAM::TEST-SPEC &amp;KEY ((:PRINT-NAMES *PRINT-NAMES*) *PRINT-NAMES*))
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Run the test specified by TEST-SPEC.</p>
+
+<p>TEST-SPEC can be either a symbol naming a test or test suite, or
+a testable-object object. This function changes the operations
+performed by the !, !! and !!! functions.</p>
+
+  </div>
+</section>
+<section id='apiref-run!' class='section-apiref-item'>
+  <div class='apiref-spec'>RUN!
+  </div>
+  <div class='apiref-lambda'>(&amp;OPTIONAL (IT.BESE.FIVEAM::TEST-SPEC IT.BESE.FIVEAM::*SUITE*) &amp;KEY
+ ((:PRINT-NAMES *PRINT-NAMES*) *PRINT-NAMES*))
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Equivalent to (explain! (run TEST-SPEC)).</p>
+
+  </div>
+</section>
+</section>
+</article>
   </body>
 </html>

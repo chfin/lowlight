@@ -84,7 +84,7 @@ pre {
 }
 
 .section-apiref-item {
-    border-bottom: 1px solid rgb(204,204,204);
+    /*border-bottom: 1px solid rgb(204,204,204);*/
 }
 
 /* syntax highlighting */

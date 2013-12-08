@@ -9,6 +9,9 @@
 (defvar *lexer-buffer-size* 1024
   "controlling knob for the graylex buffer size")
 
+(defvar *debug* nil
+  "controls debug output (`t` or `nil`)")
+
 ;;; get a style by keyword or itself
 
 (defgeneric get-style (style)

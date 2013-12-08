@@ -7,8 +7,7 @@
     (if symbol
 	(cond ((special-operator-p symbol) :specialop)
 	      ((macro-function symbol) :stdmacro)
-	      ((function symbol) :stdfun)
-	      (t :symbol))
+	      (t :stdfun))
 	:symbol)))
 
 (eval-when (:load-toplevel :compile-toplevel)

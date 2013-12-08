@@ -8,4 +8,4 @@
 	  #:define-cfg-style #:make-cfg-style
 	  #:define-simple-style #:make-simple-style
 	  #:style-classes
-	  #:*lexer-buffer-size*))
+	  #:*lexer-buffer-size* #:*debug*))

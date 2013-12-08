@@ -5,6 +5,6 @@
   :description "Documentation generation for lowlight"
   :author "Christoph Finkensiep <chfin@freenet.de>"
   :license "MIT"
-  :depends-on (#:lowlight #:cl-gendoc)
+  :depends-on (#:lowlight #:lowlight.tests #:cl-gendoc)
   :components ((:file "package")
                (:file "lowlight.doc")))

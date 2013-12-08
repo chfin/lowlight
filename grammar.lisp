@@ -35,6 +35,11 @@
 	      (if sub (cdr sub) elt)))
 	  tree depth))
 
+(defun print-if (cnd obj &optional stream)
+  (if cnd
+      (print obj stream)
+      obj))
+
 (defun inject-ignorables (terminals ignores productions)
   "=> a list of productions
 Takes a list of terminals, a list of ignorables, and a list of productions in cl-yacc syntax.
@@ -106,7 +111,8 @@ If no `:ignore` form is given, it defaults to `'(:default)`."
 			(remove :other-tokens rules :key #'car))))
     `(let ((lowlight.1::*parser* nil))
        ;;define a parser
-       (yacc:define-parser lowlight.1::*parser* ,@(rules-to-grammar rules productions))
+       (yacc:define-parser lowlight.1::*parser*
+	 ,@(print-if *debug* (rules-to-grammar rules productions)))
        ;;add a style object
        (make-instance 'lowlight.1::cfg-style
 		      :rules (list ,@rules*

@@ -11,4 +11,4 @@
     (lowlight:light-file-blocks :common-lisp in :out out))
   (gendoc:gendoc (:output-filename "lowlight.html" :css "ghs-doc.css" :title "lowlight - a simple syntax highlighter" :output-system :lowlight.doc)
     (:mdf "intro.md")
-    (:apiref #:lowlight #:lowlight.doc)))
+    (:apiref #:lowlight #:lowlight.doc #:lowlight.tests)))
