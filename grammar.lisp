@@ -111,13 +111,9 @@ If no `:ignore` form is given, it defaults to `'(:default)`."
 			(remove :other-tokens rules :key #'car))))
     `(let ((lowlight.1::*parser* nil))
        ;;define a parser
-       ,(handler-bind ((yacc:yacc-compile-warning
-			(lambda (c)
-			  (declare (ignore c))
-			  (invoke-restart 'muffle-warning))))
-		      (macroexpand
-		       `(yacc:define-parser lowlight.1::*parser*
-			  ,@(print-if *debug* (rules-to-grammar rules productions)))))
+       (yacc:define-parser lowlight.1::*parser*
+	 (:muffle-conflicts t)
+	 ,@(print-if *debug* (rules-to-grammar rules productions)))
        ;;add a style object
        (make-instance 'lowlight.1::cfg-style
 		      :rules (list ,@rules*
