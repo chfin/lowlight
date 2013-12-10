@@ -30,54 +30,85 @@
 
       </header>
       <section>
-        <h1>lowlight</h1>
+        <h1>
+<a name="lowlight" class="anchor" href="#lowlight"><span class="octicon octicon-link"></span></a>lowlight</h1>
 
-<p>A simple, regex based syntax highlighter in Common Lisp.</p>
+<p>A simple syntax highlighter in Common Lisp based on a lexer and a parser.</p>
 
-<h2>Features</h2>
+<p><em>Version 1.0 approaching!</em></p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
 <li>higlighting code in html spans</li>
 <li>themable with css</li>
 <li>string and file highlighting</li>
+<li>highlight code in markdown blocks</li>
 <li>simple and flexible highlighting engine</li>
-<li>based on regular expressions</li>
-</ul><h3>Supported languages</h3>
+<li>based on a lexer (<a href="https://github.com/e-user/graylex">graylex</a>) and a parser (<a href="http://www.pps.univ-paris-diderot.fr/%7Ejch%20/software/cl-yacc/">cl-yacc</a>)</li>
+</ul><h3>
+<a name="supported-languages" class="anchor" href="#supported-languages"><span class="octicon octicon-link"></span></a>Supported languages</h3>
 
 <ul>
 <li>Common Lisp</li>
-</ul><p>The Common Lisp style tries to emulate SLIME but sometimes offers more classes.
-For an example look <a href="example.html">here</a>, the corresponding CSS is <a href="example.css">here</a>.</p>
-
-<p>I will probably support more languages in the future,
+</ul><p>I will probably support more languages in the future,
 but you can also define your own language styles.
 Also, patches to get your language style included are welcome.</p>
 
-<h2>Installation</h2>
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>ASDF, hopefully Quicklisp in the future.</p>
+<p>Lowlight is already available in Quicklisp, but at the time of writing this
+you will find an old version there.
+If you want the latest version lowlight, please download the source and
+load it via ASDF (or as a local Quicklisp project), or make sure.
+You know, that the Quicklisp version has been updated to the current version,
+if it defines a package <code>lowlight.1</code>.</p>
 
-<h2>Usage</h2>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>For detailed documentation go <a href="lowlight.html">here</a>.</p>
 
-<p>All lowlight functions and macros live in the package <code>lowlight</code></p>
+<p>All lowlight functions and macros live in the package <code>lowlight</code>:</p>
 
-<div class="highlight"><pre><span class="p">(</span><span class="nb">in-package</span> <span class="ss">#:lowlight</span><span class="p">)</span>
+<div class="highlight highlight-common-lisp"><pre><span class="p">(</span><span class="nb">in-package</span> <span class="ss">#:lowlight</span><span class="p">)</span>
 </pre></div>
 
-<p>To highlight a string use <code>light</code></p>
+<p>To highlight a string use <code>light</code>:</p>
 
-<div class="highlight"><pre><span class="p">(</span><span class="nv">light</span> <span class="ss">:common-lisp</span> <span class="s">":bla"</span><span class="p">)</span> <span class="c1">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
+<div class="highlight highlight-common-lisp"><pre><span class="p">(</span><span class="nv">light</span> <span class="ss">:common-lisp</span> <span class="s">":bla"</span><span class="p">)</span> <span class="c1">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
 </pre></div>
 
-<p>If you want to highlight a whole file, use <code>light-file</code></p>
+<p>If you want to highlight a whole file, use <code>light-file</code>:</p>
 
-<div class="highlight"><pre><span class="p">(</span><span class="nv">light-file</span> <span class="ss">:common-lisp</span> <span class="s">"~/lowlight.lisp"</span> <span class="ss">:css</span> <span class="s">"github-colors.css"</span><span class="p">)</span>
+<div class="highlight highlight-common-lisp"><pre><span class="p">(</span><span class="nv">light-file</span> <span class="ss">:common-lisp</span> <span class="s">"~/lowlight.lisp"</span> <span class="ss">:css</span> <span class="s">"github-colors.css"</span><span class="p">)</span>
 </pre></div>
+
+<h2>
+<a name="known-bugs-an-limitations" class="anchor" href="#known-bugs-an-limitations"><span class="octicon octicon-link"></span></a>Known Bugs an Limitations</h2>
+
+<h3>
+<a name="lexing-problems" class="anchor" href="#lexing-problems"><span class="octicon octicon-link"></span></a>Lexing problems</h3>
+
+<p>As lowlight uses <a href="https://github.com/e-user/graylex">graylex</a> for lexing,
+it currently suffers from a bug related do the buffer size graylex uses.
+If you experience Problems with the lexer not correctly recognizing tokens
+that cross the 1024 or 2048 character border, try to increase the buffer size
+<code>lowlight:*lexer-buffer-size*</code>.</p>
+
+<h3>
+<a name="parsing-problems" class="anchor" href="#parsing-problems"><span class="octicon octicon-link"></span></a>Parsing problems</h3>
+
+<p>The grammars that are created by <code>define-cfg-style</code> are ambiguous by design,
+so conflict warnings will be ignored by default. If you run into problems, please
+consider using <code>define-simple-style</code> or tell me, how to create unambiguous grammars
+in <code>define-cfg-style</code>. Maybe I will provide a third macro to explicitly specify a
+complete cfg, so you can make sure it's unambiguous yourself (if anyone actually needs this).</p>
       </section>
       <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
