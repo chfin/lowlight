@@ -8,7 +8,9 @@
 <link rel='stylesheet' href='ghs-doc.css' />
   </head>
   <body>
-<article class='markdown-article' id='file-intro-md'><h1>lowlight</h1>
+<article class='markdown-article' id='file-intro-md'>
+
+<h1>lowlight</h1>
 
 <p>A simple syntax highlighter in Common Lisp based on a lexer and a parser.</p>
 
@@ -65,11 +67,21 @@ if it defines a package <code>lowlight.1</code>.</p>
 
 <h2>Known Bugs an Limitations</h2>
 
+<h3>Lexing problems</h3>
+
 <p>As lowlight uses <a href="https://github.com/e-user/graylex" >graylex</a> for lexing,
 it currently suffers from a bug related do the buffer size graylex uses.
 If you experience Problems with the lexer not correctly recognizing tokens
 that cross the 1024 or 2048 character border, try to increase the buffer size
 <code>lowlight:*lexer-buffer-size*</code>.</p>
+
+<h3>Parsing problems</h3>
+
+<p>The grammars that are created by <code>define-cfg-style</code> are ambiguous by design,
+so conflict warnings will be ignored by default. If you run into problems, please
+consider using <code>define-simple-style</code> or tell me, how to create unambiguous grammars
+in <code>define-cfg-style</code>. Maybe I will provide a third macro to explicitly specify a
+complete cfg, so you can make sure it's unambiguous yourself (if anyone actually needs this).</p>
 
 </article>
 <article id='reference-lowlight' class='apiref-article'>
