@@ -12,7 +12,9 @@
 
 <h1>lowlight</h1>
 
-<p>A simple, regex based syntax highlighter in Common Lisp.</p>
+<p>A simple syntax highlighter in Common Lisp based on a lexer and a parser.</p>
+
+<p><em>Version 1.0 approaching!</em></p>
 
 <h2>Features</h2>
 
@@ -20,8 +22,9 @@
 <li>higlighting code in html spans</li>
 <li>themable with css</li>
 <li>string and file highlighting</li>
+<li>highlight code in markdown blocks</li>
 <li>simple and flexible highlighting engine</li>
-<li>based on regular expressions</li>
+<li>based on a lexer (<a href="https://github.com/e-user/graylex" >graylex</a>) and a parser (<a href="http://www.pps.univ-paris-diderot.fr/~jch%20/software/cl-yacc/" >cl-yacc</a>)</li>
 </ul>
 
 <h3>Supported languages</h3>
@@ -36,58 +39,118 @@ Also, patches to get your language style included are welcome.</p>
 
 <h2>Installation</h2>
 
-<p>ASDF, hopefully Quicklisp in the future.</p>
+<p>Lowlight is already available in Quicklisp, but at the time of writing this
+you will find an old version there.
+If you want the latest version lowlight, please download the source and
+load it via ASDF (or as a local Quicklisp project), or make sure.
+You know, that the Quicklisp version has been updated to the current version,
+if it defines a package <code>lowlight.1</code>.</p>
 
 <h2>Usage</h2>
 
-<p>All lowlight functions and macros live in the package <code>lowlight</code></p>
+<p>All lowlight functions and macros live in the package <code>lowlight</code>:</p>
 
-<pre><code>(<span class="stdmacro">in-package</span> #:<span class="symbol">lowlight</span>)
+<pre><code class="common-lisp common-lisp">(<span class="stdmacro">in-package</span> <span class="symbol">#:lowlight</span>)
 </code></pre>
 
-<p>To highlight a string use <code>light</code></p>
+<p>To highlight a string use <code>light</code>:</p>
 
-<pre><code>(<span class="stdfun">light</span> <span class="keyword">:common-lisp</span> <span class="string">":bla"</span>) <span class="comment">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"
-</span></code></pre>
+<pre><code class="common-lisp common-lisp">(<span class="symbol">light</span> <span class="keyword">:common-lisp</span> <span class="string">":bla"</span>) <span class="comment">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
+</code></pre>
 
-<p>If you want to highlight a whole file, use <code>light-file</code>
-<pre><code>(<span class="stdfun">light-file</span> <span class="keyword">:common-lisp</span> <span class="string">&quot;~/lowlight.lisp&quot;</span> <span class="keyword">:css</span> <span class="string">&quot;github-colors.css&quot;</span>)
+<p>If you want to highlight a whole file, use <code>light-file</code>:
+<pre><code class="common-lisp common-lisp">(<span class="symbol">light-file</span> <span class="keyword">:common-lisp</span> <span class="string">&quot;~/lowlight.lisp&quot;</span> <span class="keyword">:css</span> <span class="string">&quot;github-colors.css&quot;</span>)
 </code></pre></p>
+
+<h2>Known Bugs an Limitations</h2>
+
+<h3>Lexing problems</h3>
+
+<p>As lowlight uses <a href="https://github.com/e-user/graylex" >graylex</a> for lexing,
+it currently suffers from a bug related do the buffer size graylex uses.
+If you experience Problems with the lexer not correctly recognizing tokens
+that cross the 1024 or 2048 character border, try to increase the buffer size
+<code>lowlight:*lexer-buffer-size*</code>.</p>
+
+<h3>Parsing problems</h3>
+
+<p>The grammars that are created by <code>define-cfg-style</code> are ambiguous by design,
+so conflict warnings will be ignored by default. If you run into problems, please
+consider using <code>define-simple-style</code> or tell me, how to create unambiguous grammars
+in <code>define-cfg-style</code>. Maybe I will provide a third macro to explicitly specify a
+complete cfg, so you can make sure it's unambiguous yourself (if anyone actually needs this).</p>
 
 </article>
 <article id='reference-lowlight' class='apiref-article'>
   <h1>Reference: LOWLIGHT
   </h1>
-<section id='lowlight-functions' class='section-functions'>
+<section id='lowlight.1-specials' class='section-specials'>
+  <h2>Special Variables
+  </h2>
+<section id='apiref-*debug*' class='section-apiref-item'>
+  <div class='apiref-spec'>*DEBUG*
+  </div>
+  <div class='apiref-lambda'>
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>controls debug output (<code>t</code> or <code>nil</code>)</p>
+
+  </div>
+</section>
+<section id='apiref-*lexer-buffer-size*' class='section-apiref-item'>
+  <div class='apiref-spec'>*LEXER-BUFFER-SIZE*
+  </div>
+  <div class='apiref-lambda'>
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>controlling knob for the graylex buffer size</p>
+
+  </div>
+</section>
+</section>
+<section id='lowlight.1-functions' class='section-functions'>
   <h2>Functions
   </h2>
 <section id='apiref-light' class='section-apiref-item'>
   <div class='apiref-spec'>LIGHT
   </div>
-  <div class='apiref-lambda'>(STYLE INPUT)
+  <div class='apiref-lambda'>(STYLE INPUT &amp;OPTIONAL OUTPUT)
   </div>
-  <div class='apiref-result'>=&gt; a highlighted string
+  <div class='apiref-result'>=&gt; a highlighted string or <code>t</code>
   </div>
   <div class='apiref-doc'>
 
-<p>Highlights <code>input</code>.
-The used style is given by <code>style</code>.</p>
+<p>Highlights <code>input</code> which can be either a stream or a string.
+The used style is given by <code>style</code>.
+If <code>output</code> (a stream) is given, the result is printed on it,
+otherwise the result is returned as a string.</p>
 
   </div>
 </section>
 <section id='apiref-light-blocks' class='section-apiref-item'>
   <div class='apiref-spec'>LIGHT-BLOCKS
   </div>
-  <div class='apiref-lambda'>(STYLE INPUT &amp;OPTIONAL (BLOCKS STYLE))
+  <div class='apiref-lambda'>(STYLE INPUT &amp;KEY OUTPUT (BLOCKS (STYLE-NAME STYLE)))
   </div>
-  <div class='apiref-result'>=&gt; a highlighted string
+  <div class='apiref-result'>=&gt; a highlighted string or <code>t</code>
   </div>
   <div class='apiref-doc'>
 
-<p>Takes all blocks between three backticks followed by a language specifier, and three closing backticks.
-The language specifiers are given by <code>blocks</code> which is either a single item or a list.
-The block markers are converted to strings by <code>~a</code> and matched case-independently
-(so you can use keywords here, <code>:common-lisp</code> matches <code>```common-lisp</code>).</p>
+<p>Highlights all markdown code blocks in <code>input</code> with <code>style</code>
+and writes the result to <code>output</code> (or returns the result as a string,
+if <code>output</code> is not given).</p>
+
+<p><code>light-blocks</code> only hightlights blocks starting with a language name from <code>blocks</code>
+which defaults to the name of <code>style</code>. So if you are using the style <code>:common-lisp</code>
+and want to highlight blocks starting with <code>```common-lisp</code>, then you may leave out
+<code>blocks</code>. If you want blocks starting with <code>```cl</code> to be highlighted as well,
+use <code>'(:common-lisp :cl)</code> for <code>blocks</code>.</p>
 
   </div>
 </section>
@@ -113,46 +176,120 @@ If <code>raw</code> is <code>t</code> the highlighted code is <em>not</em> wrapp
 <section id='apiref-light-file-blocks' class='section-apiref-item'>
   <div class='apiref-spec'>LIGHT-FILE-BLOCKS
   </div>
-  <div class='apiref-lambda'>(STYLE IN &amp;KEY OUT (BLOCKS STYLE))
+  <div class='apiref-lambda'>(STYLE IN &amp;KEY OUT (BLOCKS (STYLE-NAME STYLE)))
   </div>
   <div class='apiref-result'>=&gt; <code>t</code>
   </div>
   <div class='apiref-doc'>
 
-<p>Highlights all blocks (see <a href="#apiref-light-blocks" ><code>light-blocks</code></a>).
-<code>in</code> and <code>out</code> behave similar to <a href="#apiref-light-file" ><code>light-file</code></a>.</p>
+<p>Highlights a file with <code>light-blocks</code>.
+<code>in</code> denotes the input file, if <code>out</code> is given, it denotes the output file.
+If not, <code>in</code> is used, with the file extension replaced by <code>.html</code>,
+so <code>foo.lisp</code> becomes <code>foo.html</code>. 
+Be careful with files already ending on <code>.html</code> as they will not change.</p>
+
+  </div>
+</section>
+<section id='apiref-make-cfg-style' class='section-apiref-item'>
+  <div class='apiref-spec'>MAKE-CFG-STYLE
+  </div>
+  <div class='apiref-lambda'>(NAME RULES PRODUCTIONS)
+  </div>
+  <div class='apiref-result'>=&gt; a <code>cfg-style</code> object
+  </div>
+  <div class='apiref-doc'>
+
+<p>Creates a new <code>cfg-style</code> with the name <code>name</code>, the token rules <code>rules</code> and the
+CFG productions <code>productions</code>.
+For the structure of <code>rules</code> and <code>productions</code> see <code>define-cfg-style</code>.</p>
+
+  </div>
+</section>
+<section id='apiref-make-simple-style' class='section-apiref-item'>
+  <div class='apiref-spec'>MAKE-SIMPLE-STYLE
+  </div>
+  <div class='apiref-lambda'>(NAME RULES)
+  </div>
+  <div class='apiref-result'>=&gt; a <code>simple-style</code> object
+  </div>
+  <div class='apiref-doc'>
+
+<p>Creates a new <code>simple-style</code> with the name <code>name</code>.
+<code>rules</code> is a list of token rules, each of the form described at <code>define-simple-style</code>.</p>
+
+  </div>
+</section>
+<section id='apiref-style-classes' class='section-apiref-item'>
+  <div class='apiref-spec'>STYLE-CLASSES
+  </div>
+  <div class='apiref-lambda'>(STYLE)
+  </div>
+  <div class='apiref-result'>=&gt; the set of token classes generated by <code>style</code>
+  </div>
+  <div class='apiref-doc'>
 
   </div>
 </section>
 </section>
-<section id='lowlight-macros' class='section-macros'>
+<section id='lowlight.1-macros' class='section-macros'>
   <h2>Macros
   </h2>
-<section id='apiref-define-style' class='section-apiref-item'>
-  <div class='apiref-spec'>DEFINE-STYLE
+<section id='apiref-define-cfg-style' class='section-apiref-item'>
+  <div class='apiref-spec'>DEFINE-CFG-STYLE
   </div>
-  <div class='apiref-lambda'>(STYLE &amp;BODY CLAUSES)
+  <div class='apiref-lambda'>(NAME RULES PRODUCTIONS)
   </div>
   <div class='apiref-result'>
   </div>
   <div class='apiref-doc'>
 
-<p>Defines a new style.
-<code>style</code> is the name of the style, typically a keyword.
-<code>clauses</code> are lists of the form <code>(regex n result*)</code>,
-where <code>regex</code> is either a string literal or a list
-beginning with a format string followed by format parameters.
-<code>n</code> is the number of registers in the regex (which must be constant!).
-The results return the highlighted string parts, which are either strings
-(not highlighted) or a cons cell,
-where the <code>car</code> is the css class and the <code>cdr</code> is the highlighted string.
-Inside the result clauses use the local macro <code>$</code> to access the regex registers,
-so <code>($ 1)</code> returns the first register.
-Note, that all text matched by the regex must appear in the results,
-otherwise it will be discarded.
-So if you want to highlight all <code>,</code> preceded by a <code>:</code>,
-the clause should look like this:
-<code>(&quot;(:)(,)&quot; 2 ($ 1) (cons &quot;comma&quot; ($ 2)))</code>.</p>
+<p>Defines a cfg style with token rules <code>rules</code> and CFG productions <code>productions</code>.
+The resulting <code>cfg-style</code> object is registered under <code>name</code> which should be a keyword.</p>
+
+<p><code>rules</code> is a list of token rules, each of the form <code>(regex class)</code>,
+where <code>regex</code> is either a string describing a regex or a list with such a string in <code>car</code>.
+In the latter case the string is taken as a control string for <code>format</code>
+and the rest of the list is given to it as arguments.
+The result is then used as the regex.
+<code>class</code> can be a keyword or a function. If it is a function, it is called with the token
+detected by <code>regex</code> and should return a keyword.
+Rules may contain forms like <code>(:other-tokens ...)</code>, each containing a list of keywords
+that do not appear as a token keyword in other rules (e.g. <code>(:other-tokens :a :b :c)</code>).
+Those are added to the list of terminals for the production rules.
+You should use this for token keywords that are generated by functions,
+as described above.</p>
+
+<p><code>productions</code> is a list of productions in cl-yacc syntax.
+The productions may contain <em>one</em> form <code>(:toplevel ...)</code> containing a list of toplevel
+non-terminals (e.g. <code>(:toplevel a b c)</code>).
+If no such form is given, all nontermials on the left-hand side of the given productions
+will become toplevel.
+Productions may also contain <em>one</em> form <code>(:ignore ...)</code> containing a list of ignorable tokens.
+Those may occur at any positition (like whitespace and comments)
+and are preserved, if all tokens are printed with <code>print-token*</code>.
+If no <code>:ignore</code> form is given, it defaults to <code>'(:default)</code>.</p>
+
+  </div>
+</section>
+<section id='apiref-define-simple-style' class='section-apiref-item'>
+  <div class='apiref-spec'>DEFINE-SIMPLE-STYLE
+  </div>
+  <div class='apiref-lambda'>(NAME &amp;BODY RULES)
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Defines a simple style with the token rules <code>rules</code>.</p>
+
+<p>The resulting <code>simple-style</code> object is registered under <code>name</code> which should be a keyword.
+<code>rules</code> is a list of token rules, each of the form <code>(regex class)</code>,
+where <code>regex</code> is either a string describing a regex or a list with such a string in <code>car</code>.
+In the latter case the string is taken as a control string for <code>format</code>
+and the rest of the list is given to it as arguments.
+The result is then used as the regex.
+<code>class</code> can be a keyword or a function. If it is a function, it is called with the token
+detected by <code>regex</code> and should return a keyword.</p>
 
   </div>
 </section>
@@ -174,6 +311,45 @@ the clause should look like this:
   <div class='apiref-doc'>
 
 <p>Creates the documentation (doc/lowlight.html) using cl-gendoc.</p>
+
+  </div>
+</section>
+</section>
+</article>
+<article id='reference-lowlight.tests' class='apiref-article'>
+  <h1>Reference: LOWLIGHT.TESTS
+  </h1>
+<section id='lowlight.tests-functions' class='section-functions'>
+  <h2>Functions
+  </h2>
+<section id='apiref-run' class='section-apiref-item'>
+  <div class='apiref-spec'>RUN
+  </div>
+  <div class='apiref-lambda'>(IT.BESE.FIVEAM::TEST-SPEC &amp;KEY ((:PRINT-NAMES *PRINT-NAMES*) *PRINT-NAMES*))
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Run the test specified by TEST-SPEC.</p>
+
+<p>TEST-SPEC can be either a symbol naming a test or test suite, or
+a testable-object object. This function changes the operations
+performed by the !, !! and !!! functions.</p>
+
+  </div>
+</section>
+<section id='apiref-run!' class='section-apiref-item'>
+  <div class='apiref-spec'>RUN!
+  </div>
+  <div class='apiref-lambda'>(&amp;OPTIONAL (IT.BESE.FIVEAM::TEST-SPEC IT.BESE.FIVEAM::*SUITE*) &amp;KEY
+ ((:PRINT-NAMES *PRINT-NAMES*) *PRINT-NAMES*))
+  </div>
+  <div class='apiref-result'>
+  </div>
+  <div class='apiref-doc'>
+
+<p>Equivalent to (explain! (run TEST-SPEC)).</p>
 
   </div>
 </section>
