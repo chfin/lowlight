@@ -48,17 +48,17 @@ if it defines a package <code>lowlight.1</code>.</p>
 
 <h2>Usage</h2>
 
-<p>All lowlight functions and macros live in the package <code>lowlight</code></p>
+<p>All lowlight functions and macros live in the package <code>lowlight</code>:</p>
 
 <pre><code class="common-lisp common-lisp">(<span class="stdmacro">in-package</span> <span class="symbol">#:lowlight</span>)
 </code></pre>
 
-<p>To highlight a string use <code>light</code></p>
+<p>To highlight a string use <code>light</code>:</p>
 
 <pre><code class="common-lisp common-lisp">(<span class="symbol">light</span> <span class="keyword">:common-lisp</span> <span class="string">":bla"</span>) <span class="comment">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
 </code></pre>
 
-<p>If you want to highlight a whole file, use <code>light-file</code>
+<p>If you want to highlight a whole file, use <code>light-file</code>:
 <pre><code class="common-lisp common-lisp">(<span class="symbol">light-file</span> <span class="keyword">:common-lisp</span> <span class="string">&quot;~/lowlight.lisp&quot;</span> <span class="keyword">:css</span> <span class="string">&quot;github-colors.css&quot;</span>)
 </code></pre></p>
 

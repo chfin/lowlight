@@ -32,19 +32,19 @@ if it defines a package `lowlight.1`.
 
 ## Usage
 
-All lowlight functions and macros live in the package `lowlight`
+All lowlight functions and macros live in the package `lowlight`:
 
 ```common-lisp
 (in-package #:lowlight)
 ```
 
-To highlight a string use `light`
+To highlight a string use `light`:
 
 ```common-lisp
 (light :common-lisp ":bla") ;=> "<span class=\"keyword\">:bla</span>"
 ```
 
-If you want to highlight a whole file, use `light-file`
+If you want to highlight a whole file, use `light-file`:
 ```common-lisp
 (light-file :common-lisp "~/lowlight.lisp" :css "github-colors.css")
 ```
