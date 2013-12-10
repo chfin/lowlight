@@ -14,7 +14,7 @@ Taken from Alexandria's `read-file-into-string.`"
 	   :while (= bytes-read buffer-size))))))
 
 (defun make-blocks-regex (blocks)
-  (format nil "```(~{~(~a~)~^|~})([\\S\\s]*?)```" blocks))
+  (format nil "```(~{~(~a~)~^|~})[\\n\\l]{1,2}([\\S\\s]*?)```" blocks))
 
 (defun light-blocks%* (style input output blocks)
   (with-input-from-string (pre "```")

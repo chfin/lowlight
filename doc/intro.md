@@ -34,19 +34,16 @@ if it defines a package `lowlight.1`.
 
 All lowlight functions and macros live in the package `lowlight`
 
-<pre><code class="common-lisp common-lisp">
-(<span class="stdmacro">in-package</span> <span class="symbol">#:lowlight</span>)
+<pre><code class="common-lisp common-lisp">(<span class="stdmacro">in-package</span> <span class="symbol">#:lowlight</span>)
 </code></pre>
 
 To highlight a string use `light`
 
-<pre><code class="common-lisp common-lisp">
-(<span class="symbol">light</span> <span class="keyword">:common-lisp</span> <span class="string">":bla"</span>) <span class="comment">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
+<pre><code class="common-lisp common-lisp">(<span class="symbol">light</span> <span class="keyword">:common-lisp</span> <span class="string">":bla"</span>) <span class="comment">;=&gt; "&lt;span class=\"keyword\"&gt;:bla&lt;/span&gt;"</span>
 </code></pre>
 
 If you want to highlight a whole file, use `light-file`
-<pre><code class="common-lisp common-lisp">
-(<span class="symbol">light-file</span> <span class="keyword">:common-lisp</span> <span class="string">"~/lowlight.lisp"</span> <span class="keyword">:css</span> <span class="string">"github-colors.css"</span>)
+<pre><code class="common-lisp common-lisp">(<span class="symbol">light-file</span> <span class="keyword">:common-lisp</span> <span class="string">"~/lowlight.lisp"</span> <span class="keyword">:css</span> <span class="string">"github-colors.css"</span>)
 </code></pre>
 
 ## Known Bugs an Limitations
