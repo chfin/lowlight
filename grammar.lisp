@@ -87,7 +87,7 @@ If no `:ignore` form is given, it defaults to `'(:default)`."
 	 (startsym (gensym "start"))
 	 (startsym* (gensym "start*")))
     `((:start-symbol ,startsym)
-      (:terminals ,(cons :default terminals)) ; TODO change :default to all igns
+      (:terminals ,(append ignores terminals))
       ;;start with a list of toplevel productions
       (,startsym nil
 		 (,startsym* ,startsym (lambda (a b)
